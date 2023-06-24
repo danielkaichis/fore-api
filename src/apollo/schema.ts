@@ -2,9 +2,9 @@ import { gql } from "apollo-server-express";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { merge } from "lodash";
 import {
-    typeDef as DevDash,
-    resolvers as devDashResolvers,
-} from "./devDash";
+    typeDef as fore,
+    resolvers as foreResolvers,
+} from "./fore";
 import { GraphQLScalarType } from "graphql";
 
 const typeDefs = gql`
@@ -15,8 +15,8 @@ const typeDefs = gql`
 const resolvers = {};
 
 const schema = makeExecutableSchema({
-    typeDefs: [typeDefs, DevDash],
-    resolvers: merge(resolvers, devDashResolvers),
+    typeDefs: [typeDefs, fore],
+    resolvers: merge(resolvers, foreResolvers),
   });
   
 export default schema;

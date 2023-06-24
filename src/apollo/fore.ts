@@ -1,6 +1,6 @@
 import { gql } from "apollo-server-express";
-import { NoteColors, NoteRequestDTO, NoteResponseDTO } from "../types/devDash";
-import { TodoStatuses, TodoRequestDTO, TodoResponseDTO } from "../types/devDash";
+import { NoteColors, NoteRequestDTO, NoteResponseDTO } from "../types/fore";
+import { TodoStatuses, TodoRequestDTO, TodoResponseDTO } from "../types/fore";
 import { db } from "../utils/db";
 
 export const typeDef = gql`

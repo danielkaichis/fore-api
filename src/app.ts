@@ -34,9 +34,9 @@ const startServer = async () => {
         res.status(404).send("404 Not Found");
     });
 
-    app.listen(PORT), () => {
+    app.listen(PORT, () => {
         console.log(`> API running at http"//localhost:${PORT}`);
-    };
+    });
 };
 
 startServer();

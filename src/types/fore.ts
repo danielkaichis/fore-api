@@ -1,7 +1,3 @@
-export type Dev = {
-    name: string;
-}
-
 export type ClubRequestDTO = {
     userID: string;
     brand: string;
@@ -18,8 +14,4 @@ export type ClubResponseDTO = {
     clubType: string;
     flex: string;
     shaft: string;
-}
-
-export type SettingsDTO = {
-    theme: string;
 }

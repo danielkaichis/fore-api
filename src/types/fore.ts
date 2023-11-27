@@ -1,5 +1,4 @@
 export type ClubRequestDTO = {
-    userID: string;
     brand: string;
     model: string;
     clubType: string;
@@ -8,7 +7,6 @@ export type ClubRequestDTO = {
 }
 
 export type ClubResponseDTO = {
-    userID: string;
     brand: string;
     model: string;
     clubType: string;

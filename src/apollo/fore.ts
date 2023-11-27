@@ -1,5 +1,6 @@
 import { gql } from "apollo-server-express";
 import { db } from "../utils/db";
+import { ClubRequestDTO, ClubResponseDTO } from "../types/fore";
 
 export const typeDef = gql`
 
@@ -32,18 +33,28 @@ export const typeDef = gql`
 export const resolvers = {
     // update with real code
     Query: {
-        getClubs: async () => {
-            const clubs = await db.collection("clubs").get();
-            return clubs.docs.map((club) => club.data());
+        getClubs: async (
+            _: any,
+            { userID }: { userID: string },
+        ):Promise<Array<ClubResponseDTO>> => {
+            const clubs: Array<ClubResponseDTO> = [];
+            const userClubsRef = db.collection("users").doc(userID).collection("clubs");
+            await userClubsRef.get().then(snapshot => {
+                snapshot.docs.forEach(doc => {
+                    clubs.push(doc.data() as ClubResponseDTO);
+                });
+            });
+            return clubs;
         }
     },
     Mutation: {
-        addClub: async (_: any, { name }: any) => {
-            const club = {
-                name,
-            };
-            await db.collection("clubs").add(club);
-            return club;
+        addClub: async (
+            _: any,
+            userID: string,
+            { club }: { club: ClubRequestDTO }
+        ) => {
+            const userRef = db.collection("users").doc(userID);
+            await userRef.collection("clubs").add(club);
         }
     }
 };

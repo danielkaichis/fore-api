@@ -1,12 +1,4 @@
-export type ClubRequestDTO = {
-    brand: string;
-    model: string;
-    clubType: string;
-    flex: string;
-    shaft: string;
-}
-
-export type ClubResponseDTO = {
+export type Club = {
     brand: string;
     model: string;
     clubType: string;

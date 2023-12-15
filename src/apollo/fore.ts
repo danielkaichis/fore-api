@@ -1,32 +1,32 @@
 import { gql } from "apollo-server-express";
 import { db } from "../utils/db";
-import { ClubRequestDTO, ClubResponseDTO } from "../types/fore";
+import { Club } from "../types/fore";
 
 export const typeDef = gql`
 
     input ClubRequestDTO {
-        userID: String!
         brand: String!
         model: String!
         clubType: String!
-        flex: String
-        shaft: String
+        flex: String!
+        shaft: String!
     }
 
     type ClubResponseDTO {
         brand: String!
         model: String!
         clubType: String!
-        flex: String
-        shaft: String
+        flex: String!
+        shaft: String!
     }
+
 
     extend type Query {
         getClubs(userID: String!): [ClubResponseDTO]
     }
 
     extend type Mutation {
-        addClub(club: ClubRequestDTO!): ClubResponseDTO
+        addClub(userID: String!, club: ClubRequestDTO!): ClubResponseDTO
     }
 `;
 
@@ -36,12 +36,12 @@ export const resolvers = {
         getClubs: async (
             _: any,
             { userID }: { userID: string },
-        ):Promise<Array<ClubResponseDTO>> => {
-            const clubs: Array<ClubResponseDTO> = [];
+        ):Promise<Array<Club>> => {
+            const clubs: Array<Club> = [];
             const userClubsRef = db.collection("users").doc(userID).collection("clubs");
             await userClubsRef.get().then(snapshot => {
                 snapshot.docs.forEach(doc => {
-                    clubs.push(doc.data() as ClubResponseDTO);
+                    clubs.push(doc.data() as Club);
                 });
             });
             return clubs;
@@ -50,11 +50,9 @@ export const resolvers = {
     Mutation: {
         addClub: async (
             _: any,
-            userID: string,
-            { club }: { club: ClubRequestDTO }
+            { userID, club }: { userID: string, club: Club }
         ) => {
-            const userRef = db.collection("users").doc(userID);
-            await userRef.collection("clubs").add(club);
+            await db.collection("users").doc(userID).collection("clubs").doc(club.clubType).set(club);
         }
     }
 };

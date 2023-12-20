@@ -1,11 +1,8 @@
 import { gql } from "apollo-server-express";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { merge } from "lodash";
-import {
-    typeDef as fore,
-    resolvers as foreResolvers,
-} from "./fore";
-import { GraphQLScalarType } from "graphql";
+import { typeDef as Fore, resolvers as foreResolvers } from "./fore";
+import { typeDef as Club, resolvers as clubResolvers } from "./club";
 
 const typeDefs = gql`
     type Query
@@ -15,8 +12,8 @@ const typeDefs = gql`
 const resolvers = {};
 
 const schema = makeExecutableSchema({
-    typeDefs: [typeDefs, fore],
-    resolvers: merge(resolvers, foreResolvers),
+    typeDefs: [typeDefs, Fore, Club],
+    resolvers: merge(resolvers, foreResolvers, clubResolvers),
   });
   
 export default schema;

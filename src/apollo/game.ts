@@ -23,7 +23,7 @@ export const typeDef = gql`
 
     input GameRequestDTO {
         date: String!
-        course: [String]
+        course: String
         holes: Int!
         teeBox: String!
         score: Int!
@@ -33,7 +33,7 @@ export const typeDef = gql`
 
     type GameResponseDTO {
         date: String!
-        course: [String]
+        course: String
         holes: Int!
         teeBox: String!
         score: Int!

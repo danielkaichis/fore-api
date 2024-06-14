@@ -4,7 +4,7 @@ import { Club } from "../types/fore";
 
 export const typeDef = gql`
 
-    input ClubRequestDTO {
+    input ClubInput {
         brand: String!
         model: String!
         clubType: String!
@@ -12,7 +12,7 @@ export const typeDef = gql`
         shaft: String!
     }
 
-    type ClubResponseDTO {
+    type ClubResponse {
         brand: String!
         model: String!
         clubType: String!
@@ -21,11 +21,11 @@ export const typeDef = gql`
     }
 
     extend type Query {
-        getClubs(userID: String!): [ClubResponseDTO]
+        getClubs(userID: String!): [ClubResponse]
     }
 
     extend type Mutation {
-        addClub(userID: String!, club: ClubRequestDTO!): ClubResponseDTO
+        addClub(userID: String!, club: ClubInput!): ClubResponse
     }
 `;
 

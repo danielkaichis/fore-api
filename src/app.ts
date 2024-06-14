@@ -31,6 +31,7 @@ const startServer = async () => {
     };
     app.use(cors(corsOptions));
 
+    // TODO: This doesnt work
     // Authenticate user token
     // app.use(authenticateUserMiddleware);
 

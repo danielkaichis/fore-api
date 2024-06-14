@@ -13,7 +13,7 @@ export const typeDef = gql`
         score: Int!
     }
 
-    type CompletedHoleOutput {
+    type CompletedHoleResponse {
         holeNumber: Int!
         par: Int!
         length: [Int]
@@ -21,32 +21,31 @@ export const typeDef = gql`
         score: Int!
     }
 
-    input GameRequestDTO {
+    input GameInput {
         date: String!
         course: String
         holes: Int!
         teeBox: String!
         score: Int!
-        handicapDifferential: Float!
         scorecard: [CompletedHoleInput]
     }
 
-    type GameResponseDTO {
+    type GameResponse {
         date: String!
         course: String
         holes: Int!
         teeBox: String!
         score: Int!
         handicapDifferential: Float!
-        scorecard: [CompletedHoleOutput]
+        scorecard: [CompletedHoleResponse]
     }
 
     extend type Query {
-        getGames(userID: String!): [GameResponseDTO]
+        getGames(userID: String!): [GameResponse]
     }
 
     extend type Mutation {
-        addGame(userID: String!, game: GameRequestDTO!): GameResponseDTO
+        addGame(userID: String!, game: GameInput!): GameResponse
     }
 `;
 
@@ -68,7 +67,7 @@ export const resolvers = {
         }
     },
     Mutation: {
-        addClub: async (
+        addGame: async (
             _: any,
             { userID, game }: { userID: string, game: Game }
         ): Promise<Game | Error> => {

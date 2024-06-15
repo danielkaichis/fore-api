@@ -58,6 +58,7 @@ export const typeDef = gql`
 
     input CourseInput {
         name: String!
+        par: Int!
         teeBoxes: [TeeBoxInput!]!
         address: AddressInput
         scorecard: [HoleInput!]!
@@ -65,6 +66,7 @@ export const typeDef = gql`
 
     type CourseResponse {
         name: String!
+        par: Int!
         teeBoxes: [TeeBoxResponse!]!
         address: AddressResponse
         scorecard: [HoleResponse!]!

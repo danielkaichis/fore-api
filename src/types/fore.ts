@@ -46,9 +46,9 @@ export type Course = {
 }
 
 export type Game = {
-    date: Date;
+    date: string;
     course: string;
-    holes: 9 | 18;
+    holes: string; // "9" | "18";
     teeBox: string;
     score: number;
     handicapDifferential: number;

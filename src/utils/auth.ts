@@ -10,8 +10,7 @@ export const authenticateUserMiddleware = (
     try {
         if (authToken) {
             if (authToken.split(" ")[0] === "Bearer") {
-
-            authToken = authToken.split(" ")[1];
+                authToken = authToken.split(" ")[1];
             }
             getAuth()
                 .verifyIdToken(authToken)

@@ -6,8 +6,6 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
 });
 
-const db = admin.firestore();
-
 import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import { CLIENT_ORIGIN_URL, PORT } from "./utils/secrets";
@@ -31,14 +29,8 @@ const startServer = async () => {
     };
     app.use(cors(corsOptions));
 
-    // TODO: This doesnt work
-    // Authenticate user token
-    // app.use(authenticateUserMiddleware);
-
-    app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-        if (err.name === "UnauthorizedError") {
-          next();
-        }
+    app.use((req: Request, res: Response, next: NextFunction) => {
+        authenticateUserMiddleware(req, res, next);
     });
 
     const server = new ApolloServer<UserContext>({

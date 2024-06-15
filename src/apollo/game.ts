@@ -1,7 +1,7 @@
 import { gql } from "apollo-server-express";
 import { db } from "../utils/db";
-import { Game } from "../types/fore";
-import {  } from "@graphql-tools/schema"
+import { Game, TeeBox } from "../types/fore";
+
 
 export const typeDef = gql`
 
@@ -23,8 +23,8 @@ export const typeDef = gql`
 
     input GameInput {
         date: String!
-        course: String
-        holes: Int!
+        course: String!
+        holes: String!
         teeBox: String!
         score: Int!
         scorecard: [CompletedHoleInput]
@@ -32,11 +32,11 @@ export const typeDef = gql`
 
     type GameResponse {
         date: String!
-        course: String
-        holes: Int!
+        course: String!
+        holes: String!
         teeBox: String!
         score: Int!
-        handicapDifferential: Float!
+        handicapDifferential: Float
         scorecard: [CompletedHoleResponse]
     }
 
@@ -56,14 +56,18 @@ export const resolvers = {
             _: any,
             { userID }: { userID: string },
         ):Promise<Array<Game>> => {
-            const games: Array<Game> = [];
-            const userGamesRef = db.collection("users").doc(userID).collection("games");
-            await userGamesRef.get().then(snapshot => {
-                snapshot.docs.forEach(doc => {
-                    games.push(doc.data() as Game);
+            try {
+                const games: Array<Game> = [];
+                const userGamesRef = db.collection("users").doc(userID).collection("games");  
+                await userGamesRef.get().then(snapshot => {
+                    snapshot.docs.forEach(async doc => {
+                        games.push(doc.data() as Game);
+                    });
                 });
-            });
-            return games;
+                return games;
+            } catch (error) { 
+                throw new Error("Error getting games");
+            }
         }
     },
     Mutation: {
@@ -71,9 +75,18 @@ export const resolvers = {
             _: any,
             { userID, game }: { userID: string, game: Game }
         ): Promise<Game | Error> => {
-            const clubRef = db.collection("users").doc(userID).collection("games").doc(game.date.toUTCString()); 
-            // add club if clubRef does not exist
-            await clubRef.set(game, { merge: true }).catch(() => {
+            const courseRef = db.collection("courses").doc(game.course);   
+            await courseRef.get().then(courseDoc => {
+                const course = courseDoc.data();
+                if (course) {
+                    const teeBox = course.teeBoxes.find((teeBox: TeeBox) => teeBox.name === game.teeBox);
+                    let slope = teeBox?.slope;
+                    let courseRtg = teeBox?.courseRtg;
+                    game.handicapDifferential = (game.score - courseRtg) * (113 / slope);
+                }
+            });
+            const gameRef = db.collection("users").doc(userID).collection("games").doc(new Date(Date.now()).toUTCString()); 
+            await gameRef.set(game, { merge: true }).catch(() => {
                 return new Error("Error adding game");
             });
             return game;

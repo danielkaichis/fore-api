@@ -1,31 +1,14 @@
-import { NextFunction, Request, Response } from "express";
 import { getAuth } from "firebase-admin/auth";
 
-export const authenticateUserMiddleware = (
-    req: Request,
-    res: Response,
-    next: NextFunction
+export const authenticateUserMiddleware = async (
+    authToken: string,
 ) => {
-    let authToken = req.headers.authorization;
-    try {
-        if (authToken) {
-            if (authToken.split(" ")[0] === "Bearer") {
-                authToken = authToken.split(" ")[1];
-            }
-            getAuth()
-                .verifyIdToken(authToken)
-                .then((decodedToken) => {
-                    const uid = decodedToken.uid;
-                    // set user context
-                    return next();
-                })
-                .catch((error) => { 
-                    console.log(error);
-                    return next(error);
-                });
-        }
-    } catch (error) {
-        console.log(error);
-        return next();
+    if (authToken.startsWith('Bearer ')) {
+        authToken = authToken.slice(7, authToken.length);
     }
+    const user = await getAuth().verifyIdToken(authToken).then(async (decodedToken) => {
+        const uid = decodedToken.uid;
+        return await getAuth().getUser(uid);
+    });
+    return user;
 };

@@ -6,12 +6,13 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
 });
 
-import express, { NextFunction, Request, Response } from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import { CLIENT_ORIGIN_URL, PORT } from "./utils/secrets";
 import { ApolloServer } from "apollo-server-express";
 import schema from "./apollo/schema";
-import { getAuth } from "firebase/auth";
+import { getAuth } from "firebase-admin/auth";
+import { GraphQLError } from "graphql";
 
 interface UserContext {
     userID: string;
@@ -29,12 +30,21 @@ const startServer = async () => {
     };
     app.use(cors(corsOptions));
 
-    app.use((req: Request, res: Response, next: NextFunction) => {
-        authenticateUserMiddleware(req, res, next);
-    });
 
     const server = new ApolloServer<UserContext>({
         schema,
+        context: async ({ req }: { req: Request }) => { // Update the type of the 'req' parameter
+            try {
+                const user = await authenticateUserMiddleware(req.headers.authorization || "");
+                return { user };
+            } catch (error: any) {
+               
+                throw new GraphQLError("An error occurred while processing your request. Please try again.", 
+                { extensions: 
+                    { code: "INTERNAL_SERVER_ERROR" }
+                });
+            }
+        }
     });
 
     await server.start();

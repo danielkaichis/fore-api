@@ -21,7 +21,7 @@ export const authenticateUserMiddleware = (
                 })
                 .catch((error) => { 
                     console.log(error);
-                    return next();
+                    return next(error);
                 });
         }
     } catch (error) {

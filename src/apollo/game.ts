@@ -1,6 +1,7 @@
 import { gql } from "apollo-server-express";
 import { db } from "../utils/db";
 import { Game, TeeBox } from "../types/fore";
+import { calculateHandicapDifferential } from "../utils/handicapUtil";
 
 
 export const typeDef = gql`
@@ -38,10 +39,16 @@ export const typeDef = gql`
         score: Int!
         handicapDifferential: Float
         scorecard: [CompletedHoleResponse]
+        includedInHandicap: Boolean
+    }
+
+    type GameResponseObject {
+        games: [GameResponse]
+        handicap: Float
     }
 
     extend type Query {
-        getGames(userID: String!): [GameResponse]
+        getGames(userID: String!): GameResponseObject
     }
 
     extend type Mutation {
@@ -55,7 +62,7 @@ export const resolvers = {
         getGames: async (
             _: any,
             { userID }: { userID: string },
-        ):Promise<Array<Game>> => {
+        ):Promise<{ games: Array<Game>, handicap: number }> => {
             try {
                 const games: Array<Game> = [];
                 const userGamesRef = db.collection("users").doc(userID).collection("games");  
@@ -64,7 +71,13 @@ export const resolvers = {
                         games.push(doc.data() as Game);
                     });
                 });
-                return games;
+                const userRef = db.collection("users").doc(userID);
+                const handicap = calculateHandicapDifferential(games)
+                await userRef.set({ handicap });
+                return {
+                    games,
+                    handicap
+                };
             } catch (error) { 
                 throw new Error("Error getting games");
             }
@@ -82,7 +95,11 @@ export const resolvers = {
                     const teeBox = course.teeBoxes.find((teeBox: TeeBox) => teeBox.name === game.teeBox);
                     let slope = teeBox?.slope;
                     let courseRtg = teeBox?.courseRtg;
-                    game.handicapDifferential = (game.score - courseRtg) * (113 / slope);
+                    if (game.holes == "9") {
+                        game.handicapDifferential = (game.score - (courseRtg / 2)) * (113 / slope);
+                    } else {
+                        game.handicapDifferential = (game.score - courseRtg) * (113 / slope);
+                    }
                 }
             });
             const gameRef = db.collection("users").doc(userID).collection("games").doc(new Date(Date.now()).toUTCString()); 

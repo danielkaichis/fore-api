@@ -11,7 +11,6 @@ import cors from "cors";
 import { CLIENT_ORIGIN_URL, PORT } from "./utils/secrets";
 import { ApolloServer } from "apollo-server-express";
 import schema from "./apollo/schema";
-import { getAuth } from "firebase-admin/auth";
 import { GraphQLError } from "graphql";
 
 interface UserContext {
@@ -33,7 +32,7 @@ const startServer = async () => {
 
     const server = new ApolloServer<UserContext>({
         schema,
-        context: async ({ req }: { req: Request }) => { // Update the type of the 'req' parameter
+        context: async ({ req }: { req: Request }) => { 
             try {
                 const user = await authenticateUserMiddleware(req.headers.authorization || "");
                 return { user };

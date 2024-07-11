@@ -18,7 +18,6 @@ interface UserContext {
 }
 
 const startServer = async () => {
-
     // initialize firebase
     const app = express();
 
@@ -28,7 +27,6 @@ const startServer = async () => {
         credentials: true,
     };
     app.use(cors(corsOptions));
-
 
     const server = new ApolloServer<UserContext>({
         schema,

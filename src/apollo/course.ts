@@ -86,8 +86,6 @@ export const resolvers = {
     Query: {
         getCourses: async (
             _: any,
-            // TODO: protect this endpoint
-            { userID }: { userID: string },
         ):Promise<Array<Course>> => {
             const courses: Array<Course> = [];
             const coursesRef = db.collection("courses");
@@ -108,7 +106,7 @@ export const resolvers = {
             // add course if courseref does not exist
             const courseSnapshot = await courseRef.get();
             if (!courseSnapshot.exists) {
-                await courseRef.set(course, { merge: true }).catch((err) => {
+                await courseRef.set(course, { merge: true }).catch(() => {
                     return new Error("Error adding course");
                 });
                 return course;

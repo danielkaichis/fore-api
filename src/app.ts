@@ -2,6 +2,7 @@ import admin from "firebase-admin";
 import { authenticateUserMiddleware } from "./utils/auth";
 var serviceAccount = require("../fore-d2820-firebase-adminsdk-gzklu-b305e4fa7c.json");
 
+// initialize firebase admin
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
 });
@@ -18,7 +19,6 @@ interface UserContext {
 }
 
 const startServer = async () => {
-    // initialize firebase
     const app = express();
 
     //enable cors

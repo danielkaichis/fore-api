@@ -18,30 +18,6 @@ export const typeDef = gql`
         country: String!
     }
 
-    input TeeLengthMapInput {
-        key: String!
-        value: Int!
-    }
-
-    type TeeLengthMapResponse {
-        key: String!
-        value: Int!
-    }
-
-    input HoleInput { 
-        holeNumber: Int!
-        par: Int!
-        teeLengths: TeeLengthMapInput! 
-        handicap: Int!
-    }
-
-    type HoleResponse { 
-        holeNumber: Int!
-        par: Int!
-        teeLengths: TeeLengthMapResponse! 
-        handicap: Int!
-    }
-
     input TeeBoxInput {
         name: String!
         slope: Int!
@@ -61,7 +37,6 @@ export const typeDef = gql`
         par: Int!
         teeBoxes: [TeeBoxInput!]!
         address: AddressInput
-        scorecard: [HoleInput!]!
     }
 
     type CourseResponse {
@@ -69,7 +44,6 @@ export const typeDef = gql`
         par: Int!
         teeBoxes: [TeeBoxResponse!]!
         address: AddressResponse
-        scorecard: [HoleResponse!]!
     }
 
     extend type Query {

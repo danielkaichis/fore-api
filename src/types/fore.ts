@@ -17,16 +17,16 @@ export type Address = {
     country: string;
 }
 
-export type Hole = {
-    holeNumber: number;
-    par: 3 | 4 | 5;
-    teeLengths: Map<String, number>; // tee -> hole length
-    handicap: number;
-}
+// export type Hole = {
+//     holeNumber: number;
+//     par: 3 | 4 | 5;
+//     teeLengths: Map<String, number>; // tee -> hole length
+//     handicap: number;
+// }
 
-export type CompletedHole = Hole & {
-    score: number;
-}
+// export type CompletedHole = Hole & {
+//     score: number;
+// }
 
 export type TeeBox = {
     name: string,
@@ -39,7 +39,7 @@ export type Course = {
     name: string;
     teeBoxes: TeeBox[];
     address: Address;
-    scorecard: Hole[]; // array of 18 holes
+    // scorecard: Hole[]; // array of 18 holes
     // TODO: implement map and courseLayout features
     // map: CourseMap;
     // courseLayout: CourseLayout;
@@ -52,6 +52,6 @@ export type Game = {
     teeBox: string;
     score: number;
     handicapDifferential: number;
-    scorecard: CompletedHole[];
+    // scorecard: CompletedHole[];
     includedInHandicap: boolean;
 }

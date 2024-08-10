@@ -6,29 +6,12 @@ import { calculateHandicapDifferential } from "../utils/handicapUtil";
 
 export const typeDef = gql`
 
-    input CompletedHoleInput {
-        holeNumber: Int!
-        par: Int!
-        length: [Int]
-        handicap: Int!
-        score: Int!
-    }
-
-    type CompletedHoleResponse {
-        holeNumber: Int!
-        par: Int!
-        length: [Int]
-        handicap: Int!
-        score: Int!
-    }
-
     input GameInput {
         date: String!
         course: String!
         holes: String!
         teeBox: String!
         score: Int!
-        scorecard: [CompletedHoleInput]
     }
 
     type GameResponse {
@@ -38,7 +21,6 @@ export const typeDef = gql`
         teeBox: String!
         score: Int!
         handicapDifferential: Float
-        scorecard: [CompletedHoleResponse]
         includedInHandicap: Boolean
     }
 

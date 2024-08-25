@@ -1,11 +1,10 @@
 import admin from "firebase-admin";
 import { authenticateUserMiddleware } from "./utils/auth";
-var serviceAccount = require("../fore-d2820-firebase-adminsdk-gzklu-b305e4fa7c.json");
 const functions = require("firebase-functions");
 
 // initialize firebase admin
 admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
+    credential: admin.credential.cert("./fore-d2820-firebase-adminsdk-gzklu-b305e4fa7c.json")
 });
 
 import express, { Request } from "express";

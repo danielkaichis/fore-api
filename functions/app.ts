@@ -1,34 +1,30 @@
 import admin from "firebase-admin";
 import { authenticateUserMiddleware } from "./utils/auth";
 var serviceAccount = require("../fore-d2820-firebase-adminsdk-gzklu-b305e4fa7c.json");
+const functions = require("firebase-functions");
 
 // initialize firebase admin
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
 });
 
-import express, { Request, Response } from "express";
+import express, { Request } from "express";
 import cors from "cors";
-import { CLIENT_ORIGIN_URL, PORT } from "./utils/secrets";
-import { ApolloServer } from "apollo-server-express";
-import schema from "./apollo/schema";
+import { CLIENT_ORIGIN_URL } from "./utils/secrets";
+const { ApolloServer } = require("apollo-server-cloud-functions");
+import schema from "./graphql/schema";
 import { GraphQLError } from "graphql";
 
-interface UserContext {
-    userID: string;
-}
-
 const startServer = async () => {
-    const app = express();
+    const app: any = express();
 
-    //enable cors
     const corsOptions = {
         origin: [CLIENT_ORIGIN_URL, "https://studio.apollographql.com"],
         credentials: true,
     };
     app.use(cors(corsOptions));
 
-    const server = new ApolloServer<UserContext>({
+    const server = new ApolloServer({
         schema,
         context: async ({ req }: { req: Request }) => { 
             try {
@@ -44,16 +40,7 @@ const startServer = async () => {
         }
     });
 
-    await server.start();
-    server.applyMiddleware({ app });
-
-    app.get("*", (req: Request, res: Response) => {
-        res.status(404).send("404 Not Found");
-    });
-
-    app.listen(PORT, () => {
-        console.log(`> API running at http//localhost:${PORT}`);
-    });
+    exports.graphql = functions.https.onRequest(server.createHandler());
 };
 
 startServer();

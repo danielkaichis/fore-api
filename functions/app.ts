@@ -19,7 +19,7 @@ const startServer = async () => {
     const app: any = express();
 
     const corsOptions = {
-        origin: [CLIENT_ORIGIN_URL, "https://studio.apollographql.com"],
+        origin: [CLIENT_ORIGIN_URL, "https://studio.apollographql.com", "http://localhost:3002"],
         credentials: true,
     };
     app.use(cors(corsOptions));

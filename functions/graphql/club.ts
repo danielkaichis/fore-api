@@ -55,7 +55,7 @@ export const resolvers = {
             // add club if clubRef does not exist
             const clubSnapshot = await clubRef.get();
             if (!clubSnapshot.exists) {
-                await clubRef.set(club, { merge: true }).catch((err) => {
+                await clubRef.set(club, { merge: true }).catch(() => {
                     return new Error("Error adding club");
                 });
                 return club;

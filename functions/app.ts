@@ -1,45 +1,50 @@
-import admin from "firebase-admin";
-import { authenticateUserMiddleware } from "./utils/auth";
-const functions = require("firebase-functions");
+import { authenticateUserMiddleware } from "./utils/auth.js";
+import functions from "firebase-functions";
 
-// initialize firebase admin
-admin.initializeApp({
-    credential: admin.credential.cert("./fore-d2820-firebase-adminsdk-gzklu-b305e4fa7c.json")
-});
-
-import express, { Request } from "express";
+import express from "express";
+import http from "http";
 import cors from "cors";
-import { CLIENT_ORIGIN_URL } from "./utils/secrets";
-const { ApolloServer } = require("apollo-server-cloud-functions");
-import schema from "./graphql/schema";
+import { CLIENT_ORIGIN_URL } from "./utils/secrets.js";
+import { ApolloServer } from "@apollo/server";
+import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
+import { expressMiddleware } from "@apollo/server/express4";
+import schema from "./graphql/schema.js";
 import { GraphQLError } from "graphql";
 
-const startServer = async () => {
-    const app: any = express();
+const app = express();
+const httpServer = http.createServer(app);
 
-    const corsOptions = {
-        origin: [CLIENT_ORIGIN_URL, "https://studio.apollographql.com", "http://localhost:3002"],
-        credentials: true,
-    };
-    app.use(cors(corsOptions));
+const server = new ApolloServer({
+  schema,
+  plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+});
 
-    const server = new ApolloServer({
-        schema,
-        context: async ({ req }: { req: Request }) => { 
-            try {
-                const user = await authenticateUserMiddleware(req.headers.authorization || "");
-                return { user };
-            } catch (error: any) {
-               
-                throw new GraphQLError("An error occurred while processing your request. Please try again.", 
-                { extensions: 
-                    { code: "INTERNAL_SERVER_ERROR" }
-                });
-            }
-        }
-    });
+await server.start();
 
-    exports.graphql = functions.https.onRequest(server.createHandler());
+const corsOptions = {
+  origin: [CLIENT_ORIGIN_URL, "https://studio.apollographql.com", "http://localhost:3002"],
+  credentials: true,
 };
 
-startServer();
+app.use(cors(corsOptions));
+
+app.use(
+  "/graphql",
+  cors<cors.CorsRequest>(corsOptions),
+  express.json(),
+  expressMiddleware(server, {
+    context: async ({ req }) => {
+      try {
+        const user = await authenticateUserMiddleware(req.headers.authorization || "");
+        return { user };
+      } catch (error: unknown) {
+        throw new GraphQLError("An error occurred while processing your request. Please try again.",
+          { extensions:
+            { code: "INTERNAL_SERVER_ERROR" },
+          });
+      }
+    },
+  })
+);
+
+export const graphql = functions.https.onRequest(app);

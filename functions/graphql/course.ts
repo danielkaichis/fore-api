@@ -1,6 +1,6 @@
 import { gql } from "apollo-server-express";
-import { db } from "../utils/db";
-import { Course } from "../types/fore";
+import { db } from "../utils/db.js";
+import { Course } from "../types/fore.js";
 
 export const typeDef = gql`
 
@@ -56,37 +56,36 @@ export const typeDef = gql`
 `;
 
 export const resolvers = {
-    // update with real code
-    Query: {
-        getCourses: async (
-            _: any,
-        ):Promise<Array<Course>> => {
-            const courses: Array<Course> = [];
-            const coursesRef = db.collection("courses");
-            await coursesRef.get().then(snapshot => {
-                snapshot.docs.forEach(doc => {
-                    courses.push(doc.data() as Course);
-                });
-            });
-            return courses;
-        }
+  // update with real code
+  Query: {
+    getCourses: async ():Promise<Array<Course>> => {
+      const courses: Array<Course> = [];
+      const coursesRef = db.collection("courses");
+      await coursesRef.get().then((snapshot) => {
+        snapshot.docs.forEach((doc) => {
+          courses.push(doc.data() as Course);
+        });
+      });
+      return courses;
     },
-    Mutation: {
-        addCourse: async (
-            _: any,
-            { userID, course }: { userID: string, course: Course }
-        ): Promise<Course | Error> => {
-            const courseRef = db.collection("courses").doc(course.name);
-            // add course if courseref does not exist
-            const courseSnapshot = await courseRef.get();
-            if (!courseSnapshot.exists) {
-                await courseRef.set(course, { merge: true }).catch(() => {
-                    return new Error("Error adding course");
-                });
-                return course;
-            } else {
-                return new Error("Course has already been added");
-            }
-        }
-    }
+  },
+  Mutation: {
+    addCourse: async (
+      _: never,
+      { userID, course }: { userID: string, course: Course }
+    ): Promise<Course | Error> => {
+      // TODO: Add user handling so only certain users can add courses
+      const courseRef = db.collection("courses").doc(course.name);
+      // add course if courseref does not exist
+      const courseSnapshot = await courseRef.get();
+      if (!courseSnapshot.exists) {
+        await courseRef.set(course, { merge: true }).catch(() => {
+          return new Error("Error adding course");
+        });
+        return course;
+      } else {
+        return new Error("Course has already been added");
+      }
+    },
+  },
 };

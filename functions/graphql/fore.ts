@@ -6,11 +6,11 @@ export const typeDef = gql`
 `;
 
 export const resolvers = {
-    // update with real code
-    // Query: {
+  // update with real code
+  // Query: {
 
-    // },
-    // Mutation: {
+  // },
+  // Mutation: {
 
-    // }
+  // }
 };

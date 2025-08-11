@@ -10,13 +10,6 @@ export type Club = {
     shaft: string;
 }
 
-export type Address = {
-    streetNumber: number;
-    street: string;
-    city: string;
-    country: string;
-}
-
 // export type Hole = {
 //     holeNumber: number;
 //     par: 3 | 4 | 5;
@@ -38,7 +31,8 @@ export type TeeBox = {
 export type Course = {
     name: string;
     teeBoxes: TeeBox[];
-    address: Address;
+    city: string;
+    country: string;
     // scorecard: Hole[]; // array of 18 holes
     // TODO: implement map and courseLayout features
     // map: CourseMap;

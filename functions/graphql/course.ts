@@ -4,20 +4,6 @@ import { Course } from "../types/fore.js";
 
 export const typeDef = gql`
 
-    input AddressInput { 
-        streetNumber: Int!
-        street: String!
-        city: String!
-        country: String!
-    }
-
-    type AddressResponse { 
-        streetNumber: Int!
-        street: String!
-        city: String!
-        country: String!
-    }
-
     input TeeBoxInput {
         name: String!
         slope: Int!
@@ -36,14 +22,16 @@ export const typeDef = gql`
         name: String!
         par: Int!
         teeBoxes: [TeeBoxInput!]!
-        address: AddressInput
+        city: String!
+        country: String!
     }
 
     type CourseResponse {
         name: String!
         par: Int!
         teeBoxes: [TeeBoxResponse!]!
-        address: AddressResponse
+        city: String!
+        country: String!
     }
 
     extend type Query {

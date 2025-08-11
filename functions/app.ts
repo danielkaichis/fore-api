@@ -40,7 +40,7 @@ app.use(
       } catch (error: unknown) {
         throw new GraphQLError("An error occurred while processing your request. Please try again.",
           { extensions:
-            { code: "INTERNAL_SERVER_ERROR" },
+            { code: "UNAUTHENTICATED" },
           });
       }
     },
